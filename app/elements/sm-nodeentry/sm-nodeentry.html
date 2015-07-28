@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input id="author" label="Auteur"></paper-input>
       <paper-input id="url" label="URL"></paper-input>
       <paper-input id="image" label="Image"></paper-input>
-      <!-- <file-upload id="imageupload" imgval="{{imageval}}"></file-upload> -->
+      <input type="file" name="File" id="file" on-change="setFiles" accept="image/*" >
     </form>
     <div class="buttons">
       <paper-button on-click="submitNode" raised>Voeg toe</paper-button>
@@ -34,6 +34,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </dom-module>
 <script>
 (function() {
+
+  var imgval = '';
+  
   Polymer({
     is: 'sm-nodeentry',
     properties: {
@@ -41,6 +44,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         type: Boolean,
         notify: true
       }
+      // ,
+      // fileready: {
+      //   type: Boolean,
+      //   notify: true
+      // }
+
     },
 
     // ready: function(){
@@ -55,37 +64,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // },
 
     setFiles: function(){
-      //this.buttState = "thinking";
-      //console.log('Set files started');
       this.fileInput = this.$.file.files[0];
-      //this.imageType = /image.*/;
       var that = this;
-      // if (this.fileInput.type.match(this.imageType)) {
-      //console.log('das godver een goeie image jong');
       var reader = new FileReader();
-      //console.log('reader: ', reader);
       reader.onload = function(e) {
-        //console.log(reader.result);]
-        console.log('de reader wordt uitgevoerd');
-        //that.$.abutton.hidden = true;
         that.hasimage = true;
         that.imgval = reader.result;
-        that.fire('imageReady', {'detail': reader.result});
-        
-        //that.buttState = "waiting";
         console.log(that.imgval);
       }
       reader.readAsDataURL(this.fileInput);
-                // }
     },
 
     submitNode: function() {
       this.fbNodes= new Firebase('https://stampmedia.firebaseio.com/nodes');
       var that = this;
+      console.log(that.imgval);
+      var tmp;
+      if(typeof that.imgval === 'undefined') {tmp=''} else {tmp=that.imgval};
       this.fbNodes.push({
         title: that.$.title.value,
         author: that.$.author.value,
         image: that.$.image.value,
+        realimage: tmp,
         url: that.$.url.value,
         timestamp: Firebase.ServerValue.TIMESTAMP
       },

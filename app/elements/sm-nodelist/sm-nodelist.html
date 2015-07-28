@@ -20,7 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <firebase-collection location="https://stampmedia.firebaseio.com/nodes" order-by-child="timestamp" data="{{lastResult}}"></firebase-collection>
     <template is="dom-repeat" items="{{lastResult}}">
       <paper-material elevation="2">
-        <sm-node key="{{item.__firebaseKey__}}" author="{{item.author}}" title="{{item.title}}" url="{{item.url}}" image="{{item.image}}"></sm-node>
+        <sm-node key="{{item.__firebaseKey__}}" author="{{item.author}}" title="{{item.title}}" url="{{item.url}}" image="{{checkImage(item.realimage, item.image)}}"></sm-node>
       </paper-material>
     </template>
   </template>
@@ -35,6 +35,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         type: Array,
         notify: true
       }
+    },
+
+    checkImage: function(realimage,imageurl) {
+      console.log('real: ' + realimage +' and url: ' + imageurl);
+      if (typeof realimage === 'undefined'){
+        return imageurl;
+      }
+      else
+        return realimage;
     }
 
     // ready: function(){
