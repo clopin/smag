@@ -1,0 +1,53 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="sm-nodelist">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <firebase-collection location="https://stampmedia.firebaseio.com/nodes" order-by-child="timestamp" data="{{lastResult}}"></firebase-collection>
+    <template is="dom-repeat" items="{{lastResult}}">
+      <paper-material elevation="2">
+        <sm-node key="{{item.__firebaseKey__}}" author="{{item.author}}" title="{{item.title}}" url="{{item.url}}" image="{{item.image}}"></sm-node>
+      </paper-material>
+    </template>
+  </template>
+</dom-module>
+<script>
+(function() {
+  Polymer({
+    is: 'sm-nodelist',
+
+    properties: {
+      lastResult: {
+        type: Array,
+        notify: true
+      }
+    }
+
+    // ready: function(){
+    //   console.log(this.lastResult);
+    //   var temp_array = this.lastResult.reverse();
+    //   this.lastResult= temp_array;
+    // },
+    
+    // lastResultChanged: function(oldValue, newValue){
+    //   if(newValue.length != 0)
+    //     this.lastResult = newValue.reverse();
+    //   // console.log(this.temp_array);
+    // }
+  });
+})();
+</script>
