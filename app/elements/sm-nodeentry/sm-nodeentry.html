@@ -9,6 +9,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/firebase-element/firebase-collection.html">
+<link rel="import" href="../../../../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../../../../bower_components/firebase/firebase.js">
 
 <dom-module id="sm-nodeentry">
   <style>
@@ -22,6 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input id="author" label="Auteur"></paper-input>
       <paper-input id="url" label="URL"></paper-input>
       <paper-input id="image" label="Image"></paper-input>
+      <!-- <file-upload id="imageupload" imgval="{{imageval}}"></file-upload> -->
     </form>
     <div class="buttons">
       <paper-button on-click="submitNode" raised>Voeg toe</paper-button>
@@ -32,9 +36,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 (function() {
   Polymer({
     is: 'sm-nodeentry',
+    properties: {
+      fileready: {
+        type: Boolean,
+        notify: true
+      }
+    },
+
+    // ready: function(){
+    //   this.fileready = false;
+    //   var that = this;
+    //   this.$.imageupload.addEventListener('imageReady', function(e){
+    //     console.log('image uploaded', e.detail);
+    //     that.fileready = true;
+    //     that.filedata = e.detail;
+    //     that.fire('fileready');       
+    //   });
+    // },
+
+    setFiles: function(){
+      //this.buttState = "thinking";
+      //console.log('Set files started');
+      this.fileInput = this.$.file.files[0];
+      //this.imageType = /image.*/;
+      var that = this;
+      // if (this.fileInput.type.match(this.imageType)) {
+      //console.log('das godver een goeie image jong');
+      var reader = new FileReader();
+      //console.log('reader: ', reader);
+      reader.onload = function(e) {
+        //console.log(reader.result);]
+        console.log('de reader wordt uitgevoerd');
+        //that.$.abutton.hidden = true;
+        that.hasimage = true;
+        that.imgval = reader.result;
+        that.fire('imageReady', {'detail': reader.result});
+        
+        //that.buttState = "waiting";
+        console.log(that.imgval);
+      }
+      reader.readAsDataURL(this.fileInput);
+                // }
+    },
 
     submitNode: function() {
-      this.fbNodes= new Firebase("https://stampmedia.firebaseio.com/nodes");
+      this.fbNodes= new Firebase('https://stampmedia.firebaseio.com/nodes');
       var that = this;
       this.fbNodes.push({
         title: that.$.title.value,
@@ -46,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       function(){
         that.fire('goto', {'msg': 'newproject'});
       });
-      
+
 
       this.$.title.value = '';
       this.$.author.value = '';
